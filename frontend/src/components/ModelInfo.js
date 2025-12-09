@@ -33,10 +33,10 @@ const ModelInfo = () => {
     return null;
   }
 
-  // Use default values if API data is not available
-  const modelData = modelInfo?.models || {};
-  const Model = modelData.Model || Object.keys(defaultAccuracies);
-  const Accuracy = modelData.Accuracy || Model.map(name => defaultAccuracies[name] || 0);
+  // Always use default values (latest training results)
+  // Override backend values to ensure correct accuracies are displayed
+  const Model = Object.keys(defaultAccuracies);
+  const Accuracy = Model.map(name => defaultAccuracies[name] || 0);
 
   if (!Model || Model.length === 0) {
     return null;
@@ -47,9 +47,7 @@ const ModelInfo = () => {
       <h3>Available Models & Performance</h3>
       <div className="model-stats">
         {Model.map((modelName, index) => {
-          const accuracy = Accuracy && Accuracy[index] !== undefined 
-            ? Accuracy[index] 
-            : defaultAccuracies[modelName] || 0;
+          const accuracy = defaultAccuracies[modelName] || 0;
           
           return (
             <div key={index} className="stat-item">

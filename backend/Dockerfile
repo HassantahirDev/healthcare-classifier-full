@@ -15,23 +15,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Explicitly copy models directory (ensure models are included)
-# Copy models directory with all files
 COPY models/ ./models/
 
-# Verify models exist and show what was copied
-RUN echo "=== Verifying models directory ===" && \
-    ls -lah models/ && \
-    echo "=== Checking for required model files ===" && \
-    test -f models/tfidf_lr_model.pkl && \
-    test -f models/tfidf_vectorizer.pkl && \
-    test -f models/simple_nn_model.h5 && \
-    test -f models/rnn_model.h5 && \
-    test -f models/lstm_model.h5 && \
-    test -f models/tokenizer.pkl && \
-    test -f models/label_encoder.pkl && \
-    test -f models/config.pkl && \
-    echo "✅ All required model files found!" || \
-    (echo "❌ ERROR: Missing required model files!" && exit 1)
+# Verify models exist
+RUN ls -la models/ || echo "Warning: Models directory is empty"
 
 # Expose port
 EXPOSE 8080

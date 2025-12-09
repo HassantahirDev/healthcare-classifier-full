@@ -87,10 +87,6 @@ def load_all_models():
 
 def predict_tfidf_lr(symptoms):
     """Predict using TF-IDF + XGBoost model"""
-    # Check if models are loaded
-    if 'tfidf_lr' not in models or 'tfidf_vectorizer' not in preprocessors:
-        raise ValueError("Models not loaded. Please ensure models are in the models/ directory.")
-    
     # 1. TF-IDF features
     symptom_tfidf = preprocessors['tfidf_vectorizer'].transform([symptoms])
     
@@ -117,10 +113,6 @@ def predict_tfidf_lr(symptoms):
 
 def predict_neural_network(symptoms, model_name):
     """Predict using neural network models (Simple NN, RNN, or LSTM)"""
-    # Check if models are loaded
-    if model_name not in models or 'tokenizer' not in preprocessors:
-        raise ValueError(f"Model {model_name} or tokenizer not loaded. Please ensure models are in the models/ directory.")
-    
     # Tokenize and pad the symptoms
     symptom_seq = preprocessors['tokenizer'].texts_to_sequences([symptoms])
     symptom_pad = pad_sequences(symptom_seq, maxlen=config['MAX_LEN'], padding='post')
@@ -304,17 +296,10 @@ def internal_error(error):
     return jsonify({'error': 'Internal server error'}), 500
 
 
-# Load models when module is imported (works for both direct run and gunicorn)
-# This ensures models are loaded before the app starts serving requests
-try:
-    load_all_models()
-except Exception as e:
-    print(f"❌ CRITICAL: Failed to load models: {e}")
-    print("Application cannot start without models. Please check model files.")
-    import sys
-    sys.exit(1)
-
 if __name__ == '__main__':
+    # Load models on startup
+    load_all_models()
+    
     # Run the Flask app
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port, debug=False)

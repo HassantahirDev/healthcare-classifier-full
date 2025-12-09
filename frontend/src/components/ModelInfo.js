@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { getModels } from '../services/api';
 
 const ModelInfo = () => {
-  const [modelInfo, setModelInfo] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Default accuracy values (updated with latest training results)
@@ -17,8 +16,7 @@ const ModelInfo = () => {
   useEffect(() => {
     const fetchModels = async () => {
       try {
-        const data = await getModels();
-        setModelInfo(data);
+        await getModels();
       } catch (error) {
         console.error('Error fetching model info:', error);
       } finally {
@@ -33,12 +31,10 @@ const ModelInfo = () => {
     return null;
   }
 
-  // Always use default values (latest training results)
-  // Override backend values to ensure correct accuracies are displayed
-  const Model = Object.keys(defaultAccuracies);
-  const Accuracy = Model.map(name => defaultAccuracies[name] || 0);
+  // Use default values (latest training results)
+  const modelNames = Object.keys(defaultAccuracies);
 
-  if (!Model || Model.length === 0) {
+  if (!modelNames || modelNames.length === 0) {
     return null;
   }
 
@@ -46,7 +42,7 @@ const ModelInfo = () => {
     <div className="model-info">
       <h3>Available Models & Performance</h3>
       <div className="model-stats">
-        {Model.map((modelName, index) => {
+        {modelNames.map((modelName, index) => {
           const accuracy = defaultAccuracies[modelName] || 0;
           
           return (

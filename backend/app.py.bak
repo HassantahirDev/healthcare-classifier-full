@@ -296,9 +296,9 @@ def internal_error(error):
     return jsonify({'error': 'Internal server error'}), 500
 
 
-# Load models when module is imported (for Gunicorn/production)
-load_all_models()
 if __name__ == '__main__':
+    # Load models on startup
+    load_all_models()
     
     # Run the Flask app
     port = int(os.environ.get('PORT', 8080))
